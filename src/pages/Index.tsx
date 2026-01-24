@@ -4,6 +4,7 @@ import { MonthlyBarChart } from '@/components/MonthlyBarChart';
 import { TaskPieChart } from '@/components/TaskPieChart';
 import { MonthSelector } from '@/components/MonthSelector';
 import { StatsCards } from '@/components/StatsCards';
+import { MonthlyProgress } from '@/components/MonthlyProgress';
 import { Sparkles } from 'lucide-react';
 
 const Index = () => {
@@ -67,6 +68,11 @@ const Index = () => {
             <MonthlyBarChart data={monthlyData} />
             <TaskPieChart data={taskStats} />
           </div>
+        </div>
+
+        {/* Monthly Progress Section */}
+        <div className="mt-6">
+          <MonthlyProgress getMonthlyData={getMonthlyData} />
         </div>
       </div>
     </div>
