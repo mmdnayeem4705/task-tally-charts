@@ -13,6 +13,7 @@ const Index = () => {
     setCurrentDate,
     todaysTasks,
     toggleTask,
+    editTask,
     earnedPoints,
     totalPoints,
     getMonthlyData,
@@ -57,9 +58,11 @@ const Index = () => {
             <TaskList
               tasks={todaysTasks}
               onToggle={toggleTask}
+              onEditTask={editTask}
               earnedPoints={earnedPoints}
               totalPoints={totalPoints}
               currentDate={currentDate}
+              onDateChange={setCurrentDate}
             />
           </div>
 

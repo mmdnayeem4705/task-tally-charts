@@ -1,13 +1,15 @@
 import { Task } from '@/types/task';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+import { TaskEditor } from './TaskEditor';
 
 interface TaskItemProps {
   task: Task;
   onToggle: (id: string) => void;
+  onEdit?: (id: string, name: string, points: number) => void;
 }
 
-export const TaskItem = ({ task, onToggle }: TaskItemProps) => {
+export const TaskItem = ({ task, onToggle, onEdit }: TaskItemProps) => {
   return (
     <div
       className={cn(
@@ -33,15 +35,20 @@ export const TaskItem = ({ task, onToggle }: TaskItemProps) => {
           {task.name}
         </span>
       </div>
-      <div
-        className={cn(
-          'px-2.5 py-1 rounded-full text-xs font-semibold transition-all',
-          task.completed
-            ? 'bg-accent text-accent-foreground'
-            : 'bg-primary/10 text-primary'
+      <div className="flex items-center gap-2">
+        {onEdit && (
+          <TaskEditor task={task} onSave={onEdit} />
         )}
-      >
-        +{task.points}
+        <div
+          className={cn(
+            'px-2.5 py-1 rounded-full text-xs font-semibold transition-all',
+            task.completed
+              ? 'bg-accent text-accent-foreground'
+              : 'bg-primary/10 text-primary'
+          )}
+        >
+          +{task.points}
+        </div>
       </div>
     </div>
   );
