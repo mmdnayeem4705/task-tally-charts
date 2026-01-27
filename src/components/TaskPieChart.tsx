@@ -36,11 +36,11 @@ export const TaskPieChart = ({ data }: TaskPieChartProps) => {
       <Card className="glass-card">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <PieChartIcon className="w-5 h-5 text-primary" />
-            <CardTitle className="text-lg">Task Completion Rate</CardTitle>
+            <PieChartIcon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+            <CardTitle className="text-base md:text-lg">Task Completion Rate</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px]">
+        <CardContent className="flex items-center justify-center h-[200px] md:h-[300px]">
           <p className="text-muted-foreground text-sm">No data yet this month</p>
         </CardContent>
       </Card>
@@ -51,20 +51,20 @@ export const TaskPieChart = ({ data }: TaskPieChartProps) => {
     <Card className="glass-card">
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <PieChartIcon className="w-5 h-5 text-primary" />
-          <CardTitle className="text-lg">Task Completion Rate</CardTitle>
+          <PieChartIcon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+          <CardTitle className="text-base md:text-lg">Task Completion Rate</CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px] w-full">
+      <CardContent className="p-3 md:p-6 pt-0">
+        <div className="h-[220px] md:h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={filteredData}
                 cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={90}
+                cy="45%"
+                innerRadius={35}
+                outerRadius={65}
                 paddingAngle={2}
                 dataKey="completions"
               >
@@ -81,6 +81,7 @@ export const TaskPieChart = ({ data }: TaskPieChartProps) => {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontSize: '12px',
                 }}
                 formatter={(value: number, name: string) => [
                   `${value} days (${filteredData.find(d => d.name === name)?.percentage}%)`,
@@ -91,7 +92,7 @@ export const TaskPieChart = ({ data }: TaskPieChartProps) => {
                 layout="horizontal"
                 align="center"
                 verticalAlign="bottom"
-                wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                wrapperStyle={{ fontSize: '9px', paddingTop: '8px' }}
               />
             </PieChart>
           </ResponsiveContainer>

@@ -29,20 +29,20 @@ export const DateNavigator = ({ currentDate, onDateChange }: DateNavigatorProps)
   const isTodaySelected = isToday(currentDate);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
       <Button
         variant="outline"
         size="icon"
         onClick={handlePrevDay}
-        className="h-8 w-8"
+        className="h-7 w-7 sm:h-8 sm:w-8"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="h-8 px-3 text-sm font-medium">
-            <Calendar className="h-4 w-4 mr-2" />
+          <Button variant="outline" className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm font-medium">
+            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             {format(currentDate, 'MMM d, yyyy')}
           </Button>
         </PopoverTrigger>
@@ -62,9 +62,9 @@ export const DateNavigator = ({ currentDate, onDateChange }: DateNavigatorProps)
         size="icon"
         onClick={handleNextDay}
         disabled={!canGoNext}
-        className="h-8 w-8"
+        className="h-7 w-7 sm:h-8 sm:w-8"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
 
       {!isTodaySelected && (
@@ -72,7 +72,7 @@ export const DateNavigator = ({ currentDate, onDateChange }: DateNavigatorProps)
           variant="secondary"
           size="sm"
           onClick={handleToday}
-          className="h-8 text-xs"
+          className="h-7 sm:h-8 text-[10px] sm:text-xs px-2"
         >
           Today
         </Button>
