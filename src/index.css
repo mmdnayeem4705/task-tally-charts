@@ -121,3 +121,22 @@
     @apply line-through text-muted-foreground/60;
   }
 }
+
+/* Mobile-first responsive utilities */
+@layer components {
+  .mobile-container {
+    @apply px-3 sm:px-4 md:px-6;
+  }
+
+  .mobile-card {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  .mobile-text-heading {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  .mobile-text-body {
+    @apply text-sm sm:text-base;
+  }
+}
