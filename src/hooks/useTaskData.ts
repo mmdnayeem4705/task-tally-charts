@@ -1,40 +1,62 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task, DailyRecord, DEFAULT_TASKS, TOTAL_POSSIBLE_POINTS } from '@/types/task';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, parse } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 
 const STORAGE_KEY = 'daily-tasks-data';
+const CUSTOM_TASKS_KEY = 'custom-tasks-config';
 
 export const useTaskData = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [dailyRecords, setDailyRecords] = useState<Record<string, DailyRecord>>({});
+  const [customTasks, setCustomTasks] = useState<Omit<Task, 'completed'>[]>(DEFAULT_TASKS);
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
 
+  // Load data from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       setDailyRecords(JSON.parse(stored));
     }
+    
+    const storedTasks = localStorage.getItem(CUSTOM_TASKS_KEY);
+    if (storedTasks) {
+      setCustomTasks(JSON.parse(storedTasks));
+    }
   }, []);
 
+  // Save records to localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dailyRecords));
   }, [dailyRecords]);
 
+  // Save custom tasks to localStorage
+  useEffect(() => {
+    localStorage.setItem(CUSTOM_TASKS_KEY, JSON.stringify(customTasks));
+  }, [customTasks]);
+
+  const totalPossiblePoints = customTasks.reduce((sum, t) => sum + t.points, 0);
+
   const getTodaysTasks = useCallback((): Task[] => {
     const record = dailyRecords[dateKey];
     if (record) {
-      return record.tasks;
+      // Merge with custom tasks to get updated names/points
+      return record.tasks.map(t => {
+        const customTask = customTasks.find(ct => ct.id === t.id);
+        return customTask 
+          ? { ...t, name: customTask.name, points: customTask.points }
+          : t;
+      });
     }
-    return DEFAULT_TASKS.map(t => ({ ...t, completed: false }));
-  }, [dailyRecords, dateKey]);
+    return customTasks.map(t => ({ ...t, completed: false }));
+  }, [dailyRecords, dateKey, customTasks]);
 
   const toggleTask = useCallback((taskId: string) => {
     setDailyRecords(prev => {
       const currentRecord = prev[dateKey] || {
         date: dateKey,
-        tasks: DEFAULT_TASKS.map(t => ({ ...t, completed: false })),
-        totalPoints: TOTAL_POSSIBLE_POINTS,
+        tasks: customTasks.map(t => ({ ...t, completed: false })),
+        totalPoints: totalPossiblePoints,
         earnedPoints: 0,
       };
 
@@ -44,7 +66,10 @@ export const useTaskData = () => {
 
       const earnedPoints = updatedTasks
         .filter(t => t.completed)
-        .reduce((sum, t) => sum + t.points, 0);
+        .reduce((sum, t) => {
+          const customTask = customTasks.find(ct => ct.id === t.id);
+          return sum + (customTask?.points || t.points);
+        }, 0);
 
       return {
         ...prev,
@@ -55,7 +80,13 @@ export const useTaskData = () => {
         },
       };
     });
-  }, [dateKey]);
+  }, [dateKey, customTasks, totalPossiblePoints]);
+
+  const editTask = useCallback((taskId: string, name: string, points: number) => {
+    setCustomTasks(prev => 
+      prev.map(t => t.id === taskId ? { ...t, name, points } : t)
+    );
+  }, []);
 
   const getMonthlyData = useCallback((month: Date) => {
     const start = startOfMonth(month);
@@ -69,10 +100,10 @@ export const useTaskData = () => {
         date: format(day, 'dd'),
         fullDate: key,
         earned: record?.earnedPoints || 0,
-        total: TOTAL_POSSIBLE_POINTS,
+        total: totalPossiblePoints,
       };
     });
-  }, [dailyRecords]);
+  }, [dailyRecords, totalPossiblePoints]);
 
   const getTaskStats = useCallback((month: Date) => {
     const start = startOfMonth(month);
@@ -80,7 +111,7 @@ export const useTaskData = () => {
     const days = eachDayOfInterval({ start, end });
 
     const taskCompletions: Record<string, number> = {};
-    DEFAULT_TASKS.forEach(t => {
+    customTasks.forEach(t => {
       taskCompletions[t.name] = 0;
     });
 
@@ -90,7 +121,9 @@ export const useTaskData = () => {
       if (record) {
         record.tasks.forEach(t => {
           if (t.completed) {
-            taskCompletions[t.name] = (taskCompletions[t.name] || 0) + 1;
+            const customTask = customTasks.find(ct => ct.id === t.id);
+            const taskName = customTask?.name || t.name;
+            taskCompletions[taskName] = (taskCompletions[taskName] || 0) + 1;
           }
         });
       }
@@ -101,7 +134,7 @@ export const useTaskData = () => {
       completions: count,
       percentage: Math.round((count / days.length) * 100),
     }));
-  }, [dailyRecords]);
+  }, [dailyRecords, customTasks]);
 
   const todaysTasks = getTodaysTasks();
   const earnedPoints = todaysTasks.filter(t => t.completed).reduce((sum, t) => sum + t.points, 0);
@@ -111,8 +144,9 @@ export const useTaskData = () => {
     setCurrentDate,
     todaysTasks,
     toggleTask,
+    editTask,
     earnedPoints,
-    totalPoints: TOTAL_POSSIBLE_POINTS,
+    totalPoints: totalPossiblePoints,
     getMonthlyData,
     getTaskStats,
   };
