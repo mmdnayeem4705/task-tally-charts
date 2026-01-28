@@ -6,6 +6,7 @@ import { TaskPieChart } from '@/components/TaskPieChart';
 import { MonthSelector } from '@/components/MonthSelector';
 import { StatsCards } from '@/components/StatsCards';
 import { MonthlyProgress } from '@/components/MonthlyProgress';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Sparkles, LogOut, User } from 'lucide-react';
 
@@ -54,6 +55,7 @@ const Index = () => {
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline truncate max-w-[150px]">{user?.email}</span>
               </div>
+              <ThemeToggle />
               <Button variant="outline" size="sm" onClick={signOut}>
                 <LogOut className="w-4 h-4 mr-1" />
                 <span className="hidden sm:inline">Sign Out</span>
