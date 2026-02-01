@@ -63,7 +63,7 @@ export const useTaskDataSupabase = () => {
     loadUserTasks();
   }, [user]);
 
-  // Load daily records for current month
+  // Load daily records for current year (to support MonthlyProgress yearly view)
   useEffect(() => {
     if (!user) {
       setLoading(false);
@@ -72,15 +72,16 @@ export const useTaskDataSupabase = () => {
 
     const loadRecords = async () => {
       setLoading(true);
-      const start = startOfMonth(currentDate);
-      const end = endOfMonth(currentDate);
+      const year = currentDate.getFullYear();
+      const startOfYear = `${year}-01-01`;
+      const endOfYear = `${year}-12-31`;
 
       const { data, error } = await supabase
         .from('daily_records')
         .select('date, task_id, completed')
         .eq('user_id', user.id)
-        .gte('date', format(start, 'yyyy-MM-dd'))
-        .lte('date', format(end, 'yyyy-MM-dd'));
+        .gte('date', startOfYear)
+        .lte('date', endOfYear);
 
       if (error) {
         console.error('Error loading records:', error);
@@ -101,7 +102,7 @@ export const useTaskDataSupabase = () => {
     };
 
     loadRecords();
-  }, [user, currentDate]);
+  }, [user, currentDate.getFullYear()]);
 
   const totalPossiblePoints = customTasks.reduce((sum, t) => sum + t.points, 0);
 
