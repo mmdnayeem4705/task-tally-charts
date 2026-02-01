@@ -102,6 +102,7 @@ export const useTaskDataSupabase = () => {
     };
 
     loadRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentDate.getFullYear()]);
 
   const totalPossiblePoints = customTasks.reduce((sum, t) => sum + t.points, 0);
